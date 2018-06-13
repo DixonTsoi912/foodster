@@ -45,10 +45,7 @@ app.set('port', process.env.PORT || 3000);
 app.listen(app.get('port'), function () {
   console.log("Server Start!");
 });
-  /**
-   * Create HTTP server.
-   */
-//var server = http.createServer(app);
+
 // models.sequelize.sync().then(function() {
 //   http.createServer(function (req, res) {
 //     res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
