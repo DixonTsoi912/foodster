@@ -8,5 +8,6 @@
   "define": {
     "charset": "utf8",
     "collate": "utf8_general_ci"
-  }
+  },
+  "secret": "foodersecret"
 }

@@ -1,6 +1,6 @@
-var express = require('express');
-var router = express.Router();
-var users = require('../handlers/user');
+const express = require('express');
+const router = express.Router();
+const users = require('../handlers/user');
 
 /* GET users listing. */
 router.get('/', users.getUserList);
