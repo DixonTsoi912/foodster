@@ -1,8 +1,13 @@
 let userController = require('../controllers/UserController');
 
-exports.getUserList = function(req, res) {
-    userController.getUserList(req, result => {
+exports.getUserProfile = function(req, res) {
+    userController.getUserProfile(req, result => {
         res.send(result);
     })
 }
 
+exports.updateUserProfile = function(req, res) {
+    userController.updateUserProfile(req, result => {
+        res.send(result);
+    })
+}

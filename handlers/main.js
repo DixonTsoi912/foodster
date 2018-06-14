@@ -2,7 +2,7 @@ const authController = require('../controllers/MainController');
 const child = require('child_process');
 
 exports.uptime = function(req, res) {
-    child.exec('uptime', function (err, stdout, stderr) {
+    child.exec('uptime', function (err, stdout) {
         if(!err) {
             res.send({status: 200, result: stdout});
         } else {
@@ -19,6 +19,7 @@ exports.signUp = function(req, res) {
 
 exports.login = function(req, res) {
     authController.login(req, result => {
+        console.log(result);
         res.send(result);
     })
 }

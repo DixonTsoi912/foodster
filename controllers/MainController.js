@@ -90,7 +90,7 @@ exports.login = function(req, cb) {
                         reject({status: 404});
                     } else {
                         var token = jwt.sign({ id: user.id }, config.secret);
-                        resolve(token);
+                        resolve({userId: user.id, token: token});
                     }
                 }
             }).error(function(err){
@@ -99,7 +99,7 @@ exports.login = function(req, cb) {
         });
     }
 
-    var updateLastLogin = function(token) {
+    var updateLastLogin = function(user) {
         return new Promise(function(resolve, reject){
             models.user.update({
                 lastLogin: lastLogin
@@ -108,7 +108,7 @@ exports.login = function(req, cb) {
                     email: email
                 }
             }).then(function(){
-                resolve(token);
+                resolve(user);
             }).error(function(err){
                 reject({status: 500, err: err});
             })
@@ -116,10 +116,10 @@ exports.login = function(req, cb) {
     }
     checkValue().then(function(){
         return checkUser();
-    }).then(function(token){
-        return updateLastLogin(token);
-    }).then(function(token){
-        cb({ auth: true, token: token, status: 200 });
+    }).then(function(user){
+        return updateLastLogin(user);
+    }).then(function(user){
+        cb({ auth: true, id: user.userId, token: user.token, status: 200 });
     }).catch(function(err){
         cb({status: 500, err: err});
     })
