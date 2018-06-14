@@ -12,7 +12,6 @@ exports.signup = function(req, cb) {
     var lastLogin = moment().format('YYYY-MM-DD  h:mm:ss');
     var checkUser = function() {
         return new Promise(function(resolve, reject) {
-            console.log(validator.validate(email));
             if(validator.validate(email) && password) {
                 models.user.findAll({
                     email: email,
