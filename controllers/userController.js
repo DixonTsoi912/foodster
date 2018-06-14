@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const models = require('../models/');
+const models = require('../models');
 
 exports.getUserList = function(req , cb) {
     cb({result: 200});

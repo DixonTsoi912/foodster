@@ -1,4 +1,4 @@
-let authController = require('../controllers/AuthController');
+let authController = require('../controllers/MainController');
 
 exports.signUp = function(req, res) {
     authController.signup(req, result => {
