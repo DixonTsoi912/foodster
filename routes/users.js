@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const users = require('../handlers/user');
+let user = require('../controllers/UserController');
 const ensureAuthenticated = require('../controllers/AuthController');
 
 /* GET users listing. */
-router.get('/:id', ensureAuthenticated , users.getUserProfile);
+router.get('/:id', ensureAuthenticated , user.getUserProfile);
 
-router.post('/', ensureAuthenticated , users.updateUserProfile);
+router.post('/', ensureAuthenticated , user.updateUserProfile);
 
 module.exports = router;

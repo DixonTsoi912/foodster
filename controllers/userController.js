@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const models = require('../models');
 const Promise = require('promise');
 
-exports.getUserProfile = function(req , cb) {
+exports.getUserProfile = function(req , res) {
     let userId = req.params.id;
     if(userId) {
         models.user.find({
@@ -11,16 +11,16 @@ exports.getUserProfile = function(req , cb) {
             },
             attributes:['id', 'email', 'name', 'profileURL', 'lastLogin']
         }).then(user => {
-            cb({status: 200, user: user});
+            res.send({status: 200, user: user});
         }).error(err => {
-            cb({status: 500, err: err});
+            res.send({status: 500, err: err});
         })
     } else {
-        cb({status: 400, err: 'empty user id'});
+        res.send({status: 400, err: 'empty user id'});
     }
 }
 
-exports.updateUserProfile = function(req, cb) {
+exports.updateUserProfile = function(req, res) {
     let userId = req.body.userId;
     let profileURL = req.body.profileURL;
     let name = req.body.name;
@@ -72,8 +72,8 @@ exports.updateUserProfile = function(req, cb) {
     checkValue().then(function(status){
         return updateProfile(status);
     }).then(function(status){
-        cb(status);
+        res.send(status);
     }).catch(function(err){
-        cb({status: 500, err: err});
+        res.send({status: 500, err: err});
     })
 }

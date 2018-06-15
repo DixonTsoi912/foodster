@@ -5,8 +5,14 @@ const config  = require('../configs/config.json');
 const moment = require('moment');
 const Promise = require('promise');
 const validator = require("email-validator");
+const child = require('child_process');
 
-exports.signup = function(req, cb) {
+exports.uptime = function(req, res) {
+    child.exec('uptime', function (error, stdout, stderr) {
+       res.send({status: 200, uptime: stdout});
+    });
+}
+exports.signup = function(req, res) {
     var email = req.body.email.trim();
     var password = req.body.password.trim();
     var lastLogin = moment().format('YYYY-MM-DD  h:mm:ss');
@@ -53,13 +59,13 @@ exports.signup = function(req, cb) {
     checkUser().then(function(){
         return createUser();
     }).then(function(result){
-        cb(result);
+        res.send({status:200, result: result});
     }).catch(function(err){
-        cb(err);
+        res.send({status: 500, err});
     })
 }
 
-exports.login = function(req, cb) {
+exports.login = function(req, res) {
     var email = req.body.email.trim();
     var password = req.body.password.trim();
     var lastLogin = moment().format('YYYY-MM-DD  h:mm:ss');
@@ -119,8 +125,8 @@ exports.login = function(req, cb) {
     }).then(function(user){
         return updateLastLogin(user);
     }).then(function(user){
-        cb({ auth: true, id: user.userId, token: user.token, status: 200 });
+        res.send({ auth: true, id: user.userId, token: user.token, status: 200 });
     }).catch(function(err){
-        cb({status: 500, err: err});
+        res.send({status: 500, err: err});
     })
 }
