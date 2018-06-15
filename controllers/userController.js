@@ -22,7 +22,7 @@ exports.getUserProfile = function(req , cb) {
 
 exports.updateUserProfile = function(req, cb) {
     let userId = req.body.userId;
-    let profileURL = req.body.profileUrl;
+    let profileURL = req.body.profileURL;
     let name = req.body.name;
     
     var checkValue = function() {
@@ -35,7 +35,7 @@ exports.updateUserProfile = function(req, cb) {
                     attributes: ['id']
                 }).then(user => {
                     if(user) {
-                        resolve({status: 200});
+                        resolve(200);
                     } else {
                         reject({status: 400, err: 'empty user id'});
                     }
@@ -52,12 +52,12 @@ exports.updateUserProfile = function(req, cb) {
         return new Promise(function(resolve, reject){
             if(status == 200) {
                 models.user.update({
+                    profileURL: profileURL,
+                    name: name    
+                }, {
                     where: {
                         id: userId
                     }
-                }, {
-                    profileURL: profileURL,
-                    name: name
                 }).then(user => {
                     resolve({status: 200});
                 }).error(err => {
