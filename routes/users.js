@@ -4,7 +4,7 @@ let user = require('../controllers/UserController');
 const ensureAuthenticated = require('../controllers/AuthController');
 
 /* GET users listing. */
-router.get('/:id', ensureAuthenticated , user.getUserProfile);
+router.get('/', ensureAuthenticated , user.getUserProfile);
 
 router.post('/', ensureAuthenticated , user.updateUserProfile);
 

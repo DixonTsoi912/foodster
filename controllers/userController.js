@@ -3,7 +3,7 @@ const models = require('../models');
 const Promise = require('promise');
 
 exports.getUserProfile = function(req , res) {
-    let userId = req.params.id;
+    let userId = req.userId;
     if(userId) {
         models.user.find({
             where: {

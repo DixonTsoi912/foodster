@@ -96,7 +96,7 @@ exports.login = function(req, res) {
                         reject({status: 404});
                     } else {
                         var token = jwt.sign({ id: user.id }, config.secret);
-                        resolve({userId: user.id, token: token});
+                        resolve({token: token});
                     }
                 }
             }).error(function(err){
@@ -125,7 +125,7 @@ exports.login = function(req, res) {
     }).then(function(user){
         return updateLastLogin(user);
     }).then(function(user){
-        res.send({ auth: true, id: user.userId, token: user.token, status: 200 });
+        res.send({ auth: true, token: user.token, status: 200 });
     }).catch(function(err){
         res.send({status: 500, err: err});
     })
