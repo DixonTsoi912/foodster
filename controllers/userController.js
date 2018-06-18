@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const models = require('../models');
 const Promise = require('promise');
+const httpStatus = require('http-status-codes');
 
 exports.getUserProfile = function(req , res) {
     let userId = req.userId;
@@ -11,9 +12,9 @@ exports.getUserProfile = function(req , res) {
             },
             attributes:['id', 'email', 'name', 'profileURL', 'lastLogin']
         }).then(user => {
-            res.send({status: 200, user: user});
+            res.status(httpStatus.OK).send({user: user});
         }).error(err => {
-            res.send({status: 500, err: err});
+            res.send({status: httpStatus.INTERNAL_SERVER_ERROR, err: err});
         })
     } else {
         res.send({status: 400, err: 'empty user id'});
@@ -35,7 +36,7 @@ exports.updateUserProfile = function(req, res) {
                     attributes: ['id']
                 }).then(user => {
                     if(user) {
-                        resolve(200);
+                        resolve(httpStatus.OK);
                     } else {
                         reject({status: 400, err: 'empty user id'});
                     }
@@ -50,7 +51,7 @@ exports.updateUserProfile = function(req, res) {
 
     var updateProfile = function(status) {
         return new Promise(function(resolve, reject){
-            if(status == 200) {
+            if(status == httpStatus.OK) {
                 models.user.update({
                     profileURL: profileURL,
                     name: name    
@@ -59,9 +60,9 @@ exports.updateUserProfile = function(req, res) {
                         id: userId
                     }
                 }).then(user => {
-                    resolve({status: 200});
+                    resolve({status: httpStatus.OK});
                 }).error(err => {
-                    resolve({status: 500, err: err});
+                    resolve({status: httpStatus.INTERNAL_SERVER_ERROR, err: err});
                 })
             } else {
                 reject({status: status });
@@ -74,6 +75,6 @@ exports.updateUserProfile = function(req, res) {
     }).then(function(status){
         res.send(status);
     }).catch(function(err){
-        res.send({status: 500, err: err});
+        res.send({status: httpStatus.INTERNAL_SERVER_ERROR, err: err});
     })
 }

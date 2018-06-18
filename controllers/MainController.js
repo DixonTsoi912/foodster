@@ -6,10 +6,11 @@ const moment = require('moment');
 const Promise = require('promise');
 const validator = require("email-validator");
 const child = require('child_process');
+const httpStatus = require('http-status-codes');
 
 exports.uptime = function(req, res) {
     child.exec('uptime', function (error, stdout, stderr) {
-       res.send({status: 200, uptime: stdout});
+       res.send({status: httpStatus.OK, uptime: stdout});
     });
 }
 exports.signup = function(req, res) {
@@ -29,10 +30,10 @@ exports.signup = function(req, res) {
                         resolve();
                     }
                 }).error(err => {
-                    reject({status: 500, err: err});
+                    reject({status: httpStatus.INTERNAL_SERVER_ERROR, err: err});
                 })
             } else {
-                reject({status: 500});
+                reject({status: httpStatus.INTERNAL_SERVER_ERROR});
             }
         })
     }
@@ -47,7 +48,7 @@ exports.signup = function(req, res) {
                 }).then(user => {
                     // create a token
                     var token = jwt.sign({ id: user.id }, config.secret);
-                    cb({ auth: true, token: token, status: 200 });
+                    cb({ auth: true, token: token, status: httpStatus.OK });
                 }).error(err => {
                     reject(err);
                 });
@@ -59,9 +60,9 @@ exports.signup = function(req, res) {
     checkUser().then(function(){
         return createUser();
     }).then(function(result){
-        res.send({status:200, result: result});
+        res.status(HttpStatus.OK).send({result: result});
     }).catch(function(err){
-        res.send({status: 500, err});
+        res.send({status: httpStatus.INTERNAL_SERVER_ERROR, err});
     })
 }
 
@@ -75,7 +76,7 @@ exports.login = function(req, res) {
             if(email && password) {
                 resolve();
             } else {
-                reject({status: 500})
+                reject({status: httpStatus.INTERNAL_SERVER_ERROR})
             }
         });
     }
@@ -100,7 +101,7 @@ exports.login = function(req, res) {
                     }
                 }
             }).error(function(err){
-                reject({status: 500, err: err});
+                reject({status: httpStatus.INTERNAL_SERVER_ERROR, err: err});
             })
         });
     }
@@ -116,7 +117,7 @@ exports.login = function(req, res) {
             }).then(function(){
                 resolve(user);
             }).error(function(err){
-                reject({status: 500, err: err});
+                reject({status: httpStatus.INTERNAL_SERVER_ERROR, err: err});
             })
         });
     }
@@ -125,8 +126,8 @@ exports.login = function(req, res) {
     }).then(function(user){
         return updateLastLogin(user);
     }).then(function(user){
-        res.send({ auth: true, token: user.token, status: 200 });
+        res.send({ auth: true, token: user.token, status: httpStatus.OK });
     }).catch(function(err){
-        res.send({status: 500, err: err});
+        res.send({status: httpStatus.INTERNAL_SERVER_ERROR, err: err});
     })
 }
