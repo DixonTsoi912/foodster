@@ -41,14 +41,18 @@ exports.signup = function(req, res) {
         return new Promise(function(resolve, reject) {
             if(email && password) {
                 var hashedPassword = bcrypt.hashSync(password, 8);
+                console.log(req.body);
+                var roleId = (config['role'][req.body.role]) ? config['role'][req.body.role] : config['role']['user'];
                 models.user.create({
                     email: email,
                     password: hashedPassword,
-                    lastLogin: lastLogin
+                    lastLogin: lastLogin,
+                    isActivated: false,
+                    roleId: roleId
                 }).then(user => {
                     // create a token
                     var token = jwt.sign({ id: user.id }, config.secret);
-                    cb({ auth: true, token: token, status: httpStatus.OK });
+                    resolve({ auth: true, token: token, status: httpStatus.OK });
                 }).error(err => {
                     reject(err);
                 });
@@ -60,6 +64,7 @@ exports.signup = function(req, res) {
     checkUser().then(function(){
         return createUser();
     }).then(function(result){
+        console.log(result);
         res.status(HttpStatus.OK).send({result: result});
     }).catch(function(err){
         res.send({status: httpStatus.INTERNAL_SERVER_ERROR, err});
@@ -87,8 +92,12 @@ exports.login = function(req, res) {
                 where: {
                     email: email
                 },
-                attributes: ['id','email','password']
+                attributes: ['id','email','password'],
+                include: {
+                    model: models.role
+                }
             }).then(function(user){
+                consoel.log(user);
                 if(!user) {
                     reject({status: 404})
                 } else {

@@ -9,5 +9,10 @@
     "charset": "utf8",
     "collate": "utf8_general_ci"
   },
-  "secret": "6jCblTuBIO"
+  "secret": "6jCblTuBIO",
+  "role": {
+    "admin": "05c72d59-12d8-427e-b71c-1fdca403e666",
+    "user": "710deee5-b15a-498c-abb4-482ae56310d2",
+    "guest": "2ed7f68d-8f9b-4b5e-a6fe-f119a52261ac"
+  }
 }

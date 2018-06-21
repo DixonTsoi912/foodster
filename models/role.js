@@ -14,8 +14,8 @@ module.exports = (sequelize, DataTypes) => {
   },{
     classMethods: {
         associate: function(models) {
-            role.belongsTo(models.user);
-            post.hasMany(models.permission);
+            role.hasMany(models.user);
+            role.hasMany(models.permission);
         }
   }});
 

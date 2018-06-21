@@ -20,8 +20,10 @@ module.exports = (sequelize, DataTypes) => {
     delete: {
         type: DataTypes.BOOLEAN
     },
-    deny: {
-        type: DataTypes.BOOLEAN
+    roleId: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        allowNull: false
     }
   },{
     classMethods: {
