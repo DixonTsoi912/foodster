@@ -106,7 +106,9 @@ exports.login = function(req, res) {
                     } else {
                         if(!user.isActivated) {
                             var now = moment();
-                            //Todo
+                            var createdDate = moment(user.createdAt);
+                            var isActivated = (createdDate.diff(now, "h") < 24) ? true : false;
+                            user.isActivated = isActivated;
                         }
                         var token = jwt.sign({ id: user.id }, config.secret);
                         user.token = token;
