@@ -20,16 +20,31 @@ module.exports = (sequelize, DataTypes) => {
     roleId: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
+        allowNull: false
     }
   }, {
-    classMethods: {  
-        associate: function(models) {
-            user.hasMany(models.post,{foreignKey: 'userId'});
-            user.hasMany(models.comment,{foreignKey: 'commentId'});
-            user.belongsTo(models.role,{foreignKey: 'roleId'});
-        }
-  }});
+  });
   
+  user.assoicate = function(models) {
+    user.belongsTo(models.role, {
+        foreignKey: 'roleId',
+        as: 'role'
+    })
+   };
+
+  user.associate = function(models) {
+    user.hasMany(models.post, {
+        foreignKey: 'userId',
+        as: 'user'
+    })
+  };
+
+  user.associate = function(models) {
+    user.hasMany(models.comment, {
+        foreignKey: 'userId',
+        as: 'user'
+    })
+  };
 
   return user;
 };

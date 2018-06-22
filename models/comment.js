@@ -20,13 +20,21 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false
     }
   }, {
-    classMethods: {  
-        associate: function(models) {
-            comment.belongsTo(models.user);
-            comment.belongsTo(models.post);
-        }
-  }});
+  });
   
+  comment.associate = function(models) {
+    comment.belongsTo(models.user, {
+        foreignKey: 'userId',
+        as: 'comment'
+    })
+  };
+
+  comment.associate = function(models) {
+    comment.belongsTo(models.post, {
+        foreignKey: 'userId',
+        as: 'post'
+    })
+  };
 
   return comment;
 };

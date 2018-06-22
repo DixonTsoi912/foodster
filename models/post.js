@@ -16,13 +16,21 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false
     }
   },{
-    classMethods: {
-        associate: function(models) {
-            post.hasMany(models.user, {foreignKey: 'userId'});
-            post.hasMany(models.comment, {foreignKey: 'userId'});
-        }
-  }});
+  });
 
+  post.assoicate = function(models) {
+    post.hasMany(models.user, {
+        foreignKey: 'postId',
+        as: 'user'
+    })
+  };
+
+  post.assoicate = function(models) {
+    post.hasMany(models.comment, {
+        foreignKey: 'commentId',
+        as: 'user'
+    })
+  };
 
   return post;
 };

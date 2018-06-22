@@ -26,12 +26,14 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false
     }
   },{
-    classMethods: {
-        associate: function(models) {
-            permission.belongsTo(models.role);
-        }
-  }});
+  });
 
+  permission.assoicate = function(models) {
+      permission.belongsTo(models.role, {
+          foreignKey: 'roleId',
+          as: 'role'
+      })
+  };
 
   return permission;
 };

@@ -21,7 +21,9 @@ exports.signup = function(req, res) {
         return new Promise(function(resolve, reject) {
             if(validator.validate(email) && password) {
                 models.user.findAll({
-                    email: email,
+                    where:{
+                        email: email
+                    },
                     attributes: ['id']
                 }).then(user => {
                     if(user.length > 0) {
@@ -41,7 +43,6 @@ exports.signup = function(req, res) {
         return new Promise(function(resolve, reject) {
             if(email && password) {
                 var hashedPassword = bcrypt.hashSync(password, 8);
-                console.log(req.body);
                 var roleId = (config['role'][req.body.role]) ? config['role'][req.body.role] : config['role']['user'];
                 models.user.create({
                     email: email,
@@ -64,8 +65,7 @@ exports.signup = function(req, res) {
     checkUser().then(function(){
         return createUser();
     }).then(function(result){
-        console.log(result);
-        res.status(HttpStatus.OK).send({result: result});
+        res.status(httpStatus.OK).send({result: result});
     }).catch(function(err){
         res.send({status: httpStatus.INTERNAL_SERVER_ERROR, err});
     })
@@ -88,28 +88,32 @@ exports.login = function(req, res) {
 
     var checkUser = function() {
         return new Promise(function(resolve, reject){
-            models.user.find({
-                where: {
-                    email: email
-                },
-                attributes: ['id','email','password'],
-                include: {
-                    model: models.role
-                }
-            }).then(function(user){
-                consoel.log(user);
+            models.role.find({
+                include:[
+                    {model: models.user, as: 'user', where: {email: email},attributes: ['id','email','password', 'isActivated', 'createdAt'],},
+                    {model: models.permission, as: 'permission'}
+                ]
+            }).then(result => {
+                var role = result.name;
+                var user = result.user[0];
                 if(!user) {
                     reject({status: 404})
                 } else {
+                    user.role = role;
                     var passwordIsValid = bcrypt.compareSync(password, user.password);
                     if (!passwordIsValid) {
                         reject({status: 404});
                     } else {
+                        if(!user.isActivated) {
+                            var now = moment();
+                            //Todo
+                        }
                         var token = jwt.sign({ id: user.id }, config.secret);
-                        resolve({token: token});
+                        user.token = token;
+                        resolve(user);
                     }
                 }
-            }).error(function(err){
+            }).error(err => {
                 reject({status: httpStatus.INTERNAL_SERVER_ERROR, err: err});
             })
         });
@@ -135,7 +139,7 @@ exports.login = function(req, res) {
     }).then(function(user){
         return updateLastLogin(user);
     }).then(function(user){
-        res.send({ auth: true, token: user.token, status: httpStatus.OK });
+        res.send({ auth: true, user, status: httpStatus.OK });
     }).catch(function(err){
         res.send({status: httpStatus.INTERNAL_SERVER_ERROR, err: err});
     })

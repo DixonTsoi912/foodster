@@ -12,13 +12,19 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING
     }
   },{
-    classMethods: {
-        associate: function(models) {
-            role.hasMany(models.user);
-            role.hasMany(models.permission);
-        }
-  }});
+  });
 
+  role.associate = function(models) {
+    role.hasMany(models.user, {
+        foreignKey: 'roleId',
+        as: 'user'
+    });
+
+    role.hasMany(models.permission, {
+        foreignKey: 'roleId',
+        as: 'permission'
+    });
+  };
 
   return role;
 };
