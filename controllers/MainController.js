@@ -99,7 +99,7 @@ exports.login = function(req, res) {
                 if(!user) {
                     reject({status: 404})
                 } else {
-                    user.role = role;
+                    user.setDataValue('role' ,role);
                     var passwordIsValid = bcrypt.compareSync(password, user.password);
                     if (!passwordIsValid) {
                         reject({status: 404});
@@ -107,8 +107,8 @@ exports.login = function(req, res) {
                         if(!user.isActivated) {
                             var now = moment();
                             var createdDate = moment(user.createdAt);
-                            var isActivated = (createdDate.diff(now, "h") < 24) ? true : false;
-                            user.isActivated = isActivated;
+                            var isExpired = (createdDate.diff(now, "h") < 24) ? true : false;
+                            user.setDataValue('isExpired', isExpired);
                         }
                         var token = jwt.sign({ id: user.id }, config.secret);
                         user.token = token;
@@ -145,4 +145,14 @@ exports.login = function(req, res) {
     }).catch(function(err){
         res.send({status: httpStatus.INTERNAL_SERVER_ERROR, err: err});
     })
+}
+
+//Todo
+exports.resetPassword = function(req, res) {
+
+}
+
+//Todo
+exports.confirmUser = function(req, res) {
+    
 }
