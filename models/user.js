@@ -46,5 +46,12 @@ module.exports = (sequelize, DataTypes) => {
     })
   };
 
+  user.associate = function(models) {
+    user.belongsTo(models.resetPasswordToken, {
+        foreignKey: 'userId',
+        as: 'user'
+    })
+  };
+
   return user;
 };
