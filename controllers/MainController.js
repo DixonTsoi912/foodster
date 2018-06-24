@@ -95,23 +95,24 @@ exports.login = function(req, res) {
                 ]
             }).then(result => {
                 var role = result.name;
-                var user = result.user[0];
-                if(!user) {
+                var userData = result.user[0];
+                var user = {};
+                if(!userData) {
                     reject({status: 404})
                 } else {
-                    user.setDataValue('role' ,role);
-                    var passwordIsValid = bcrypt.compareSync(password, user.password);
+                    user['role'] = role;
+                    var passwordIsValid = bcrypt.compareSync(password, userData.password);
                     if (!passwordIsValid) {
                         reject({status: 404});
                     } else {
                         if(!user.isActivated) {
                             var now = moment();
-                            var createdDate = moment(user.createdAt);
+                            var createdDate = moment(userData.createdAt);
                             var isExpired = (createdDate.diff(now, "h") < 24) ? true : false;
-                            user.setDataValue('isExpired', isExpired);
+                            user['isExpired'] = isExpired;
                         }
-                        var token = jwt.sign({ id: user.id }, config.secret);
-                        user.token = token;
+                        var token = jwt.sign({ id: userData.id }, config.secret);
+                        user['token'] = token;
                         resolve(user);
                     }
                 }
@@ -147,12 +148,74 @@ exports.login = function(req, res) {
     })
 }
 
-//Todo
-exports.resetPassword = function(req, res) {
+//Send email
+exports.createResetPasswordToken = function(req, res) {
+    var userId = req.userId;
+
+    var createPasswordToken = function() {
+        return new Promise(function(resolve, reject){
+            if(userId) {
+                models.resetPasswordToken.create({
+                    userId: userId
+                }).then((token) => {
+                    if(token) {
+                        resolve({token: token, status: httpStatus.OK})
+                    } else {
+                        reject({status: httpStatus.INTERNAL_SERVER_ERROR});
+                    }
+                }).catch(err => {
+                    reject({status: httpStatus.INTERNAL_SERVER_ERROR, err: err});
+                });
+            } else {
+                reject({status: httpStatus.INTERNAL_SERVER_ERROR});
+            }
+        })
+    }
+
+    var sendEmail = function(result) {
+        return new Promise(function(resolve, reject) {
+            var token = result.token;
+            if(userId) {
+                models.user.find({
+                    where: {
+                        id: userId
+                    },
+                    attributes: ['id', 'email', 'name']
+                }).then((user) => {
+                    //Send Email
+                    resolve();
+                }).catch((err) => {
+                    reject({status: httpStatus.INTERNAL_SERVER_ERROR, err: err});
+                })
+            } else {
+                reject({status: httpStatus.INTERNAL_SERVER_ERROR});
+            }
+        })
+    }
+
+    createPasswordToken().then(function(result){
+        return sendEmail(result)
+    }).then(function(result){
+        res.send({status: httpStatus.OK , result: result});
+    }).catch((err) => {
+        res.send({status: httpStatus.INTERNAL_SERVER_ERROR, err: err});
+    })
 
 }
 
-//Todo
 exports.confirmUser = function(req, res) {
-    
+    var userId = req.user.id;
+    if(userId) {
+        model.user.updateAttributes({
+            isActivated: true
+        }, {
+            where: {
+                id: userId
+            }
+        }).then(() => {
+            res.send({token: token,status: httpStatus.OK})
+        }).catch(err => {
+            res.send({status: httpStatus.INTERNAL_SERVER_ERROR, err: err});
+        });
+    }
 }
