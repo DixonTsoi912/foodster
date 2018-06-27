@@ -1,16 +1,16 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+let createError = require('http-errors');
+let express = require('express');
+let path = require('path');
+let cookieParser = require('cookie-parser');
+let logger = require('morgan');
 
-var mainRouter = require('./routes/main');
-var usersRouter = require('./routes/users');
-var models = require('./models');
-var debug = require('debug')('express-sequelize');
-var http = require('http');
-
-var app = express();
+let mainRouter = require('./routes/main');
+let usersRouter = require('./routes/users');
+let models = require('./models');
+let debug = require('debug')('express-sequelize');
+let http = require('http');
+let mailer = require('./helper/emailer')
+let app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -45,7 +45,7 @@ app.set('port', process.env.PORT || 3000);
 app.listen(app.get('port'), function () {
   console.log("Server Start!");
 });
-
+mailer.sendEmail();
 // models.sequelize.sync();
 
 module.exports = app;
