@@ -45,7 +45,7 @@ app.set('port', process.env.PORT || 3000);
 app.listen(app.get('port'), function () {
   console.log("Server Start!");
 });
-mailer.sendEmail();
+mailer.sendEmail('test', 'resetPassword.txt');
 // models.sequelize.sync();
 
 module.exports = app;
