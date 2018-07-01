@@ -45,7 +45,18 @@ app.set('port', process.env.PORT || 3000);
 app.listen(app.get('port'), function () {
   console.log("Server Start!");
 });
-mailer.sendEmail('test', 'resetPassword.txt');
+
+var emailRecipients = [];
+emailRecipients.push('dixon.tsoi@nevesoft.com');
+var obj = {
+  subject: 'Reset Password',
+  recipients: emailRecipients,
+  substitution : {
+    __link__ : 'http://wwww.yahoo.com.hk'
+  }
+}
+
+//mailer.sendEmail(obj, 'resetPassword.txt');
 // models.sequelize.sync();
 
 module.exports = app;

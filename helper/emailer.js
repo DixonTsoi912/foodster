@@ -18,37 +18,52 @@ exports.sendEmail = function(emailContent, template) {
         })
     }
 
-    let replaceContent = function() {
+    let replaceContent = function(template) {
         return new Promise((resolve, reject) => {
             let substitution = emailContent.substitution;
+            for(key in substitution) {
+                template = template.replace(key, substitution[key]);
+            }
+            resolve(template);
         })
     }
-    let transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-               user: config.email.username,
-               pass: config.email.password
-        }
-    });
 
-    // let mailOptions = {
-    //     from: config.email.FORM,
-    //     to: emailContent.recipients.join(';'),
-    //     subject: emailContent.subject,
-    //     html: '<p>Your html here</p>'
-    // };
+    let sendEmail = function(template) {
+        return new Promise((resolve, reject) => {
+            let transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                       user: config.email.username,
+                       pass: config.email.password
+                }
+            });
 
-    // transporter.sendMail(mailOptions, function (err, result) {
-    //     //Logger
-    //     if(err) {
-    //         console.log(err);
-    //     } else {
-    //         console.log(result)
-    //     }
-    // });
+            let mailOptions = {
+                from: config.email.FORM,
+                to: emailContent.recipients.join(';'),
+                subject: emailContent.subject,
+                html: template
+            };
+            
+            transporter.sendMail(mailOptions, function (err, result) {
+                if(err) {
+                    reject(err);
+                } else {
+                    resolve(result);
+                }
+            });
+        })
+    }
 
     readMailTemplate()
     .then(result => {
         return replaceContent(result);
+    }).then(result => {
+        return sendEmail(result);
+    }).then(response => {
+        //Loggger
+        console.log(response);
+    }).catch(err => {
+        console.log(err);
     })
 };
