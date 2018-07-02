@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "app-root-path": "^2.1.0",
     "bcrypt": "^2.0.1",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "~1.4.3",
@@ -18,7 +19,7 @@
     "jsonwebtoken": "^8.3.0",
     "jwt-token-encrypt": "^1.0.4",
     "moment": "^2.22.2",
-    "morgan": "~1.9.0",
+    "morgan": "^1.9.0",
     "mysql2": "^1.5.3",
     "nodemailer": "^4.6.7",
     "promise": "^8.0.1",
