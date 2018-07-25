@@ -7,6 +7,7 @@ const Promise = require('promise');
 const validator = require("email-validator");
 const child = require('child_process');
 const httpStatus = require('http-status-codes');
+const logger = require('../helper/logger');
 
 exports.uptime = function(req, res) {
     child.exec('uptime', function (error, stdout, stderr) {
