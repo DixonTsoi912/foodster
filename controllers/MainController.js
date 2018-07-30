@@ -191,7 +191,7 @@ exports.createResetPasswordToken = function(req, res) {
                         subject: 'Reset Password',
                         recipients: emailRecipients,
                         substitution : {
-                            __link__ : 'http://localhost:3000/resetPassword/' + token
+                            __link__ : 'http://localhost:3000/resetPassword/' + token.id
                         }
                     }
                     mailer.sendEmail(obj, 'resetPassword.txt');
