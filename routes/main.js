@@ -11,4 +11,6 @@ router.post('/login', main.login);
 
 router.post('/resetPassword', ensureAuthenticated, main.createResetPasswordToken);
 
+router.get('/resetPassword/:token', ensureAuthenticated, main.createResetPasswordToken);
+
 module.exports = router;

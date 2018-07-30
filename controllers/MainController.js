@@ -8,6 +8,7 @@ const validator = require("email-validator");
 const child = require('child_process');
 const httpStatus = require('http-status-codes');
 const logger = require('../helper/logger');
+const mailer = require('../helper/emailer');
 
 exports.uptime = function(req, res) {
     child.exec('uptime', function (error, stdout, stderr) {
@@ -152,7 +153,7 @@ exports.login = function(req, res) {
 //Send email
 exports.createResetPasswordToken = function(req, res) {
     var userId = req.userId;
-
+    
     var createPasswordToken = function() {
         return new Promise(function(resolve, reject){
             if(userId) {
@@ -184,12 +185,23 @@ exports.createResetPasswordToken = function(req, res) {
                     attributes: ['id', 'email', 'name']
                 }).then((user) => {
                     //Send Email
+                    var emailRecipients = [];
+                    emailRecipients.push('dixon.tsoi@nevesoft.com');
+                    var obj = {
+                        subject: 'Reset Password',
+                        recipients: emailRecipients,
+                        substitution : {
+                            __link__ : 'http://localhost:3000/resetPassword/' + token
+                        }
+                    }
+                    mailer.sendEmail(obj, 'resetPassword.txt');
+                    logger.info("Email Sent, Reset Password");
                     resolve();
                 }).catch((err) => {
                     reject({status: httpStatus.INTERNAL_SERVER_ERROR, err: err});
                 })
             } else {
-                reject({status: httpStatus.INTERNAL_SERVER_ERROR});
+                reject({status: httpStatus.INTERNAL_SERVER_ERROR, err: 'no user id find'});
             }
         })
     }

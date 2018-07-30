@@ -9,7 +9,6 @@ let usersRouter = require('./routes/users');
 let models = require('./models');
 let debug = require('debug')('express-sequelize');
 let http = require('http');
-let mailer = require('./helper/emailer')
 let app = express();
 
 // view engine setup
@@ -46,17 +45,6 @@ app.listen(app.get('port'), function () {
   console.log("Server Start!");
 });
 
-var emailRecipients = [];
-emailRecipients.push('dixon.tsoi@nevesoft.com');
-var obj = {
-  subject: 'Reset Password',
-  recipients: emailRecipients,
-  substitution : {
-    __link__ : 'http://wwww.yahoo.com.hk'
-  }
-}
-
-//mailer.sendEmail(obj, 'resetPassword.txt');
 // models.sequelize.sync();
 
 module.exports = app;
